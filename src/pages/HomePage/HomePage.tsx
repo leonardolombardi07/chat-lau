@@ -11,7 +11,7 @@ function HomePage() {
 
   return (
     <PageContainer>
-      <Header>
+      <MobileHeader>
         <Icon
           name={isMobileSidebarVisible ? "close" : "listMenu"}
           size="medium"
@@ -20,14 +20,14 @@ function HomePage() {
           role="button"
           style={{ cursor: "pointer" }}
         />
-      </Header>
+      </MobileHeader>
 
-      <ChatContextProvider>
-        <ContentContainer>
+      <ContentContainer>
+        <ChatContextProvider>
           <Sidebar isMobileSidebarVisible={isMobileSidebarVisible} />
           <Main />
-        </ContentContainer>
-      </ChatContextProvider>
+        </ChatContextProvider>
+      </ContentContainer>
     </PageContainer>
   );
 }
@@ -38,12 +38,12 @@ const PageContainer = styled.div`
   overflow: hidden;
 `;
 
-const HEADER_HEIGHT = "42px";
+const MOBILE_HEADER_HEIGHT = "42px";
 
-const Header = styled.div`
+const MobileHeader = styled.div`
   position: fixed;
   top: 0;
-  height: ${HEADER_HEIGHT};
+  height: ${MOBILE_HEADER_HEIGHT};
   width: 100%;
   background-color: ${(p) => p.theme.colors.link};
   display: flex;
@@ -58,7 +58,7 @@ const Header = styled.div`
 
 const ContentContainer = styled.div`
   @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
-    margin-top: ${HEADER_HEIGHT};
+    margin-top: ${MOBILE_HEADER_HEIGHT};
   }
 
   display: flex;

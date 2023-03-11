@@ -14,11 +14,11 @@ function Sidebar({
   } = useChat();
   return (
     <SidebarContainer isMobileSidebarVisible={isMobileSidebarVisible}>
-      <div style={{ textAlign: "center" }}>
+      <SidebarHeader>
         <p>
           Não vendo o que esperava aqui? <b>SE FUDEU.</b>
         </p>
-      </div>
+      </SidebarHeader>
 
       <SidebarFooter>
         <Button
@@ -33,6 +33,10 @@ function Sidebar({
     </SidebarContainer>
   );
 }
+
+const SidebarHeader = styled.div`
+  text-align: center;
+`;
 
 const SidebarContainer = styled.aside<{ isMobileSidebarVisible: boolean }>`
   width: 260px;

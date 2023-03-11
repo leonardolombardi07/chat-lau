@@ -1,6 +1,7 @@
 import { ChatCompletionRequestMessage } from "openai";
 import { useChat } from "../context";
 import React from "react";
+import styled from "styled-components";
 
 function Messages() {
   const scrollToBottomRef = React.useRef<HTMLDivElement>(null);
@@ -20,7 +21,9 @@ function Messages() {
   return (
     <Container>
       {messages.map((m) => (
-        <Message key={m.content} message={m} />
+        <Message key={m.content} message={m}>
+          {m.content}
+        </Message>
       ))}
 
       <div ref={scrollToBottomRef} />
@@ -28,36 +31,22 @@ function Messages() {
   );
 }
 
-function Container({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        flex: 1,
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        paddingBottom: "1em",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+const Container = styled.div`
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1em;
+`;
 
-function Message({ message }: { message: ChatCompletionRequestMessage }) {
-  return (
-    <div
-      style={{
-        width: "100%",
-        background: message.role === "assistant" ? "#FFCC00" : undefined,
-        color: message.role === "assistant" ? "hsl(278, 73%, 19%)" : undefined,
-        padding: "1em",
-        borderBottom: "1px black solid",
-      }}
-    >
-      {message.content}
-    </div>
-  );
-}
+const Message = styled.div<{ message: ChatCompletionRequestMessage }>`
+  width: 100%;
+  background-color: ${(p) =>
+    p.message.role === "assistant" ? p.theme.colors.link : undefined};
+  color: ${(p) =>
+    p.message.role === "assistant" ? p.theme.colors.background : undefined};
+  padding: 1em;
+  border-bottom: 1px solid ${(p) => p.theme.colors.border};
+`;
 
 export { Messages };
