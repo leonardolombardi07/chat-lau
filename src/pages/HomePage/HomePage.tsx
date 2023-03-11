@@ -38,10 +38,12 @@ const PageContainer = styled.div`
   overflow: hidden;
 `;
 
+const HEADER_HEIGHT = "42px";
+
 const Header = styled.div`
-  position: sticky;
+  position: fixed;
   top: 0;
-  height: 42px;
+  height: ${HEADER_HEIGHT};
   width: 100%;
   background-color: ${(p) => p.theme.colors.link};
   display: flex;
@@ -54,19 +56,15 @@ const Header = styled.div`
   }
 `;
 
-function ContentContainer({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        height: "100%",
-        width: "100%",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
+const ContentContainer = styled.div`
+  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
+    margin-top: ${HEADER_HEIGHT};
+  }
+
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+`;
 
 export { HomePage };

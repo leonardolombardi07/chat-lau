@@ -110,6 +110,24 @@ h6 {
   font-size: 0.875rem;
   line-height: 1.25rem;
 }
+
+  scrollbar-width: thin;
+  scrollbar-color: ${(p) => p.theme.colors.border}  ${(p) =>
+  p.theme.colors.link};
+
+  ::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background-color:${(p) => p.theme.colors.link};
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: ${(p) => p.theme.colors.border};
+    border-radius: 10px;
+  }
 `;
 
 export { GlobalStyles };
