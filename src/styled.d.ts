@@ -14,6 +14,10 @@ declare module "styled-components" {
       tablet: string;
       desktop: string;
       smallerThanDesktop: string;
+      raw: {
+        mobile: number;
+        desktop: number;
+      };
     };
   }
 }

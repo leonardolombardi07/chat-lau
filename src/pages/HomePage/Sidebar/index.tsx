@@ -46,11 +46,9 @@ const SidebarContainer = styled.aside<{ isMobileSidebarVisible: boolean }>`
   height: 100vh;
 
   @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
-    padding-top: ${MOBILE_HEADER_HEIGHT};
-  }
-
-  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
     display: ${(p) => (p.isMobileSidebarVisible ? "block" : "none")};
+    width: 100vw;
+    padding-top: ${MOBILE_HEADER_HEIGHT};
   }
 
   /* Internal Layout */
@@ -67,6 +65,10 @@ const SidebarFooter = styled.div`
   bottom: 0;
   left: 0;
   width: ${SIDEBAR_WIDTH};
+
+  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
+    width: 100vw;
+  }
 
   /* Internal Layout */
   padding: 10px;

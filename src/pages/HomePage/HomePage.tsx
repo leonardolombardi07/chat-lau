@@ -26,7 +26,7 @@ function HomePage() {
       <ContentContainer>
         <ChatContextProvider>
           <Sidebar isMobileSidebarVisible={isMobileSidebarVisible} />
-          <Main />
+          <Main isMobileSidebarVisible={isMobileSidebarVisible} />
         </ChatContextProvider>
       </ContentContainer>
     </PageContainer>

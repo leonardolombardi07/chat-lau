@@ -2,16 +2,20 @@ import { useChat } from "../context";
 import { EmptyMessages } from "./EmptyMessages";
 import { Messages } from "./Messages";
 import React from "react";
-import { ErrorMessage, Spinner, TextArea } from "../../../components";
-import styled from "styled-components";
+import { ErrorMessage, Icon, Spinner, TextArea } from "../../../components";
+import styled, { useTheme } from "styled-components";
 
-function Main() {
+interface MainProps {
+  isMobileSidebarVisible: boolean;
+}
+
+function Main({ isMobileSidebarVisible }: MainProps) {
   const {
     state: { messages },
   } = useChat();
 
   return (
-    <Container>
+    <Container isMobileSidebarVisible={isMobileSidebarVisible}>
       {messages.length === 0 ? <EmptyMessages /> : <Messages />}
       <FixedInputFooter />
     </Container>
@@ -20,19 +24,24 @@ function Main() {
 
 const FOOTER_HEIGHT = "100px";
 
-const Container = styled.main`
+const Container = styled.main<MainProps>`
   flex: 1;
 
   /* To make sure footer content doesn't go on top of messages */
   padding-bottom: ${FOOTER_HEIGHT};
+
+  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
+    display: ${(p) => (p.isMobileSidebarVisible ? "none" : undefined)};
+  }
 `;
 
 function FixedInputFooter() {
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
   const {
-    state: { isLoading, error, input },
+    state: { error, input },
     actions: { sendMessage, setInput },
   } = useChat();
+  const { breakpoint } = useTheme();
 
   React.useEffect(
     function onInputChange() {
@@ -47,21 +56,22 @@ function FixedInputFooter() {
 
   return (
     <FooterContainer>
-      <Spinner active={isLoading} style={{ position: "absolute", top: -15 }} />
-
       <TextArea
         ref={textAreaRef}
         value={input}
         onChange={(event) => setInput(event.target.value)}
         placeholder="Digite algo irrelevante..."
         onKeyDown={(event) => {
-          if (event.shiftKey) return;
+          if (input === "") return;
+          if (event.shiftKey) return; // Shift + Enter means new line, not send
+          if (window.innerWidth < breakpoint.raw.desktop) return; // Only the button sends messages on mobile
+
           if (event.key === "Enter") {
             event.preventDefault();
-            sendMessage(input);
-            setInput("");
+            sendMessage();
           }
         }}
+        right={<SendButton />}
       />
 
       {error && <ErrorMessage header="Algum erro ocorreu" content={error} />}
@@ -71,6 +81,35 @@ function FixedInputFooter() {
         gratuíta e acessível. Seu feedback será totalmente ignorado.
       </SmallerThanDesktopFooterText>
     </FooterContainer>
+  );
+}
+
+function SendButton() {
+  const {
+    state: { isLoading, input },
+    actions: { sendMessage },
+  } = useChat();
+
+  if (isLoading) {
+    return (
+      <Spinner active style={{ position: "absolute", right: 20, top: 35 }} />
+    );
+  }
+
+  const disabled = input === "";
+
+  return (
+    <Icon
+      role="button"
+      name="send"
+      size="small"
+      style={{
+        position: "absolute",
+        right: 30,
+        cursor: disabled ? undefined : "pointer",
+      }}
+      onClick={disabled ? undefined : sendMessage}
+    />
   );
 }
 

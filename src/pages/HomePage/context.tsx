@@ -13,7 +13,7 @@ interface IChatContext {
   };
   actions: {
     setInput: Dispatch<SetStateAction<string>>;
-    sendMessage: (input: string) => void;
+    sendMessage: () => void;
     resetMessages: () => void;
   };
 }
@@ -29,6 +29,7 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
   const [input, setInput] = React.useState("");
 
   const sendMessage = React.useCallback(async () => {
+    setInput("");
     setIsLoading(true);
     setError(null);
     try {

@@ -8,4 +8,5 @@ export const breakpoint = {
   tablet: `screen and (min-width: ${raw.mobile}px) and (max-width: ${raw.desktop}px)`,
   desktop: `screen and (min-width: ${raw.desktop}px)`,
   smallerThanDesktop: `screen and (max-width: ${raw.desktop}px)`,
+  raw,
 };
