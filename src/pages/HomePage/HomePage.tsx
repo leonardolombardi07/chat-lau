@@ -4,6 +4,7 @@ import { Sidebar } from "./Sidebar";
 import React from "react";
 import { Icon } from "../../components";
 import { ChatContextProvider } from "./context";
+import { MOBILE_HEADER_HEIGHT, MOBILE_HEADER_ZINDEX } from "./constants";
 
 function HomePage() {
   const [isMobileSidebarVisible, setIsMobileSidebarVisible] =
@@ -38,22 +39,23 @@ const PageContainer = styled.div`
   overflow: hidden;
 `;
 
-const MOBILE_HEADER_HEIGHT = "42px";
+const MobileHeader = styled.header`
+  @media ${(p) => p.theme.breakpoint.desktop} {
+    display: none;
+  }
 
-const MobileHeader = styled.div`
   position: fixed;
   top: 0;
-  height: ${MOBILE_HEADER_HEIGHT};
   width: 100%;
+  max-height: ${MOBILE_HEADER_HEIGHT};
+  z-index: ${MOBILE_HEADER_ZINDEX};
   background-color: ${(p) => p.theme.colors.link};
+
+  /* Internal Layout */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-
-  @media ${(p) => p.theme.breakpoint.desktop} {
-    display: none;
-  }
 `;
 
 const ContentContainer = styled.div`
@@ -61,10 +63,12 @@ const ContentContainer = styled.div`
     margin-top: ${MOBILE_HEADER_HEIGHT};
   }
 
+  width: 100%;
+  height: 100%;
+
+  /* Internal Layout */
   display: flex;
   flex-direction: row;
-  height: 100%;
-  width: 100%;
 `;
 
 export { HomePage };

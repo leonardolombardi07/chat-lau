@@ -2,6 +2,7 @@ import { ChatCompletionRequestMessage } from "openai";
 import { useChat } from "../context";
 import React from "react";
 import styled from "styled-components";
+import { MOBILE_HEADER_HEIGHT } from "../constants";
 
 function Messages() {
   const scrollToBottomRef = React.useRef<HTMLDivElement>(null);
@@ -34,18 +35,27 @@ function Messages() {
 const Container = styled.div`
   flex: 1;
   width: 100%;
+  height: 100%;
+
+  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
+    padding-top: ${MOBILE_HEADER_HEIGHT};
+  }
+
+  /* Internal Layout */
   display: flex;
   flex-direction: column;
   padding-bottom: 1em;
+
+  overflow-y: scroll;
 `;
 
 const Message = styled.div<{ message: ChatCompletionRequestMessage }>`
+  padding: 1em;
   width: 100%;
   background-color: ${(p) =>
     p.message.role === "assistant" ? p.theme.colors.link : undefined};
   color: ${(p) =>
     p.message.role === "assistant" ? p.theme.colors.background : undefined};
-  padding: 1em;
   border-bottom: 1px solid ${(p) => p.theme.colors.border};
 `;
 

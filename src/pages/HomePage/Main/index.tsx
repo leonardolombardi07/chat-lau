@@ -18,13 +18,13 @@ function Main() {
   );
 }
 
+const FOOTER_HEIGHT = "100px";
+
 const Container = styled.main`
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  overflow-y: auto;
+
+  /* To make sure footer content doesn't go on top of messages */
+  padding-bottom: ${FOOTER_HEIGHT};
 `;
 
 function FixedInputFooter() {
@@ -47,7 +47,7 @@ function FixedInputFooter() {
 
   return (
     <FooterContainer>
-      <Spinner active={isLoading} style={{ marginBottom: -6 }} />
+      <Spinner active={isLoading} style={{ position: "absolute", top: -15 }} />
 
       <TextArea
         ref={textAreaRef}
@@ -66,12 +66,10 @@ function FixedInputFooter() {
 
       {error && <ErrorMessage header="Algum erro ocorreu" content={error} />}
 
-      <FooterText>
+      <SmallerThanDesktopFooterText>
         ChatLAU Versão 2023. Nosso objetivo é tornar sua vida miserável de forma
         gratuíta e acessível. Seu feedback será totalmente ignorado.
-      </FooterText>
-
-      <MobileSpacer />
+      </SmallerThanDesktopFooterText>
     </FooterContainer>
   );
 }
@@ -79,27 +77,21 @@ function FixedInputFooter() {
 const FooterContainer = styled.footer`
   position: sticky;
   bottom: 0;
-  padding: 10px 1em 0;
   width: 100%;
+  max-height: ${FOOTER_HEIGHT};
+
+  /* Internal Layout */
+  padding: 10px 1em;
+  text-align: center;
+
   background-color: ${(p) => p.theme.colors.background};
-  text-align: center;
-
-  @media ${(p) => p.theme.breakpoint.mobile} {
-    padding: 10px 1em;
-  }
 `;
 
-const FooterText = styled.p`
-  text-align: center;
+const SmallerThanDesktopFooterText = styled.p`
+  margin-top: 10px;
 
-  @media ${(p) => p.theme.breakpoint.mobile} {
+  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
     display: none;
-  }
-`;
-
-const MobileSpacer = styled.div`
-  @media ${(p) => p.theme.breakpoint.mobile} {
-    height: 50px;
   }
 `;
 

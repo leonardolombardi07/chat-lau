@@ -2,31 +2,6 @@ import { Button, Icon, IconNames } from "../../../components";
 import styled from "styled-components";
 import { useChat } from "../context";
 
-const EmptyMessagesContainer = styled.div`
-  text-align: center;
-  width: 100%;
-`;
-
-export const Title = styled.h1`
-  margin-top: 1.5em;
-`;
-
-const ShowcasesContainer = styled.div`
-  display: flex;
-
-  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  @media ${(p) => p.theme.breakpoint.desktop} {
-    flex-direction: row;
-    width: 90%;
-    padding: 2em;
-    margin: auto;
-  }
-`;
-
 const EXAMPLES = [
   `"Me explique quem é o LAU"`,
   `"Como posso ficar loiro se o alcool não faz efeito em mim?"`,
@@ -80,13 +55,22 @@ function EmptyMessages() {
   );
 }
 
-const ShowcaseContainer = styled.div`
-  width: calc(33.33% - 1em);
-  padding: 1em;
+const EmptyMessagesContainer = styled.div`
+  width: 100%;
+  height: 100%;
+
+  /* Internal Layout */
+  text-align: center;
+
+  overflow-y: scroll;
+`;
+
+export const Title = styled.h1`
+  margin-top: 1.5em;
 
   @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
-    flex-direction: column;
-    width: 100%;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
   }
 `;
 
@@ -116,6 +100,32 @@ function Showcase({ title, name, children }: ShowcaseProps) {
     </ShowcaseContainer>
   );
 }
+
+const ShowcasesContainer = styled.div`
+  display: flex;
+
+  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  @media ${(p) => p.theme.breakpoint.desktop} {
+    flex-direction: row;
+    padding: 2em;
+    width: 90%;
+    margin: auto;
+  }
+`;
+
+const ShowcaseContainer = styled.div`
+  width: calc(33.33% - 1em);
+  padding: 1em;
+
+  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
+    flex-direction: column;
+    width: 100%;
+  }
+`;
 
 interface ShowcaseButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
