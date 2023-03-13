@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Router } from "./routes";
+import { App } from "./App";
+import { AuthContextProvider } from "./context";
 import { StylesProvider } from "./styles";
 
 const root = ReactDOM.createRoot(
@@ -9,8 +10,10 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <StylesProvider>
-      <Router />
-    </StylesProvider>
+    <AuthContextProvider>
+      <StylesProvider>
+        <App />
+      </StylesProvider>
+    </AuthContextProvider>
   </React.StrictMode>
 );

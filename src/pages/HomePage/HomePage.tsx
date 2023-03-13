@@ -1,74 +1,40 @@
-import styled from "styled-components";
-import { Main } from "./Main";
-import { Sidebar } from "./Sidebar";
-import React from "react";
-import { Icon } from "../../components";
-import { ChatContextProvider } from "./context";
-import { MOBILE_HEADER_HEIGHT, MOBILE_HEADER_ZINDEX } from "./constants";
+import { ChatPage } from "../../components";
+import { useAuth, useChat } from "../../context";
+import { EmptyMessages } from "./EmptyMessages";
+import * as Firebase from "../../services/firebase";
+import { useNavigate } from "react-router-dom";
+import * as OpenAI from "../../services/api/Api";
 
 function HomePage() {
-  const [isMobileSidebarVisible, setIsMobileSidebarVisible] =
-    React.useState(false);
+  const {
+    actions: { sendMessage },
+  } = useChat();
+
+  const {
+    state: { user },
+  } = useAuth();
+
+  const navigate = useNavigate();
+
+  async function onSendMessage() {
+    const messages = await sendMessage();
+    if (!messages) return;
+
+    const title = await OpenAI.generateTitle(messages);
+
+    const chatId = Firebase.createChat(user?.uid || `${Math.random()}`, {
+      title: title || String(messages.at(-1)?.content?.slice(0, 3)),
+      messages,
+    });
+    navigate(`/${chatId}`);
+  }
 
   return (
-    <PageContainer>
-      <MobileHeader>
-        <Icon
-          name={isMobileSidebarVisible ? "close" : "listMenu"}
-          size="medium"
-          color="black"
-          onClick={() => setIsMobileSidebarVisible((v) => !v)}
-          role="button"
-          style={{ cursor: "pointer" }}
-        />
-      </MobileHeader>
-
-      <ContentContainer>
-        <ChatContextProvider>
-          <Sidebar isMobileSidebarVisible={isMobileSidebarVisible} />
-          <Main isMobileSidebarVisible={isMobileSidebarVisible} />
-        </ChatContextProvider>
-      </ContentContainer>
-    </PageContainer>
+    <ChatPage
+      emptyComponent={<EmptyMessages />}
+      onSendMessage={onSendMessage}
+    />
   );
 }
-
-const PageContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-`;
-
-const MobileHeader = styled.header`
-  @media ${(p) => p.theme.breakpoint.desktop} {
-    display: none;
-  }
-
-  position: fixed;
-  top: 0;
-  width: 100%;
-  max-height: ${MOBILE_HEADER_HEIGHT};
-  z-index: ${MOBILE_HEADER_ZINDEX};
-  background-color: ${(p) => p.theme.colors.link};
-
-  /* Internal Layout */
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-`;
-
-const ContentContainer = styled.div`
-  @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
-    margin-top: ${MOBILE_HEADER_HEIGHT};
-  }
-
-  width: 100%;
-  height: 100%;
-
-  /* Internal Layout */
-  display: flex;
-  flex-direction: row;
-`;
 
 export { HomePage };

@@ -8,6 +8,7 @@ declare module "styled-components" {
       border: string;
       error: string;
       link: string;
+      info: string;
     };
     breakpoint: {
       mobile: string;

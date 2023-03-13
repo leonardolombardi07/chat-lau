@@ -3,18 +3,22 @@ import {
   ChatCompletionRequestMessage,
   generateAnswer,
 } from "../../services/api";
+import { Chat } from "../../services/firebase";
 
 interface IChatContext {
   state: {
     input: string;
     isLoading: boolean;
+    chats: Chat[];
     messages: ChatCompletionRequestMessage[];
     error: string | null;
   };
   actions: {
     setInput: Dispatch<SetStateAction<string>>;
-    sendMessage: () => void;
+    sendMessage: () => Promise<ChatCompletionRequestMessage[] | null>;
+    setMessages: Dispatch<SetStateAction<ChatCompletionRequestMessage[]>>;
     resetMessages: () => void;
+    setChats: Dispatch<SetStateAction<Chat[]>>;
   };
 }
 
@@ -28,6 +32,8 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = React.useState<string | null>(null);
   const [input, setInput] = React.useState("");
 
+  const [chats, setChats] = React.useState<Chat[]>([]);
+
   const sendMessage = React.useCallback(async () => {
     setInput("");
     setIsLoading(true);
@@ -39,14 +45,16 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
       };
       const withUserMessage = [...messages, userMessage];
       setMessages(withUserMessage);
-      const withAIMessage = await generateAnswer(withUserMessage, input);
+      const withAIMessage = await generateAnswer(withUserMessage);
       setMessages(withAIMessage);
+      return withAIMessage;
     } catch (error: any) {
       console.log(error);
       setError(
         `Algo de errado ocorreu. Esse é o erro do chat: ${error.message}`
       );
       setMessages(messages); // Rollback to initial state
+      return null;
     } finally {
       setIsLoading(false);
     }
@@ -56,12 +64,21 @@ function ChatContextProvider({ children }: { children: React.ReactNode }) {
     setMessages([]);
   }, []);
 
-  const value = React.useMemo(() => {
+  const value: IChatContext = React.useMemo(() => {
     return {
-      state: { isLoading, messages, error, input },
-      actions: { sendMessage, setInput, resetMessages },
+      state: { isLoading, messages, error, input, chats },
+      actions: { sendMessage, setInput, resetMessages, setMessages, setChats },
     };
-  }, [input, isLoading, messages, error, sendMessage, resetMessages]);
+  }, [
+    chats,
+    input,
+    isLoading,
+    messages,
+    error,
+    sendMessage,
+    resetMessages,
+    setChats,
+  ]);
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 }

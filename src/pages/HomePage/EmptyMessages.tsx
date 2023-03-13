@@ -1,11 +1,11 @@
-import { Button, Icon, IconNames } from "../../../components";
+import { Button, Icon, IconNames } from "../../components";
 import styled from "styled-components";
-import { useChat } from "../context";
+import { useChat } from "../../context";
 
 const EXAMPLES = [
   `"Me explique quem é o LAU"`,
   `"Como posso ficar loiro se o alcool não faz efeito em mim?"`,
-  `""Alguma ideia de como gastar R$ 1500 em uma noite?"`,
+  `"Alguma ideia de como gastar R$ 1500 em uma noite?"`,
 ];
 
 function EmptyMessages() {
@@ -19,7 +19,10 @@ function EmptyMessages() {
       <ShowcasesContainer>
         <Showcase name="lightning bolt" title="Exemplos">
           {EXAMPLES.map((example) => (
-            <ShowcaseButton onClick={() => setInput(example)} key={example}>
+            <ShowcaseButton
+              onClick={() => setInput(example.replaceAll(`"`, ""))}
+              key={example}
+            >
               {example}
             </ShowcaseButton>
           ))}
@@ -66,10 +69,10 @@ const EmptyMessagesContainer = styled.div`
 `;
 
 export const Title = styled.h1`
-  margin-top: 1.5em;
+  margin-top: 3em;
 
   @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
-    margin-top: 1em;
+    margin-top: 2em;
     margin-bottom: 0.5em;
   }
 `;

@@ -28,7 +28,7 @@ import {
 // LAU é campeão mundial de SB20, um barco. Ninguém acredita no LAU.
 // LAU quase sempre relembra que ele gosta de ficar muito bebâdo.
 
-const INITIAL_MESSAGE: ChatCompletionRequestMessage = {
+const EXPLAIN_LAU_MESSAGE: ChatCompletionRequestMessage = {
   role: "system",
   content: `Existe um personagem fictício bebâdo, conhecido como LAU.
   Uma vez muito bebâdo, LAU teve seu cabelo pintado de loiro por criancinhas.
@@ -41,15 +41,33 @@ const INITIAL_MESSAGE: ChatCompletionRequestMessage = {
 };
 
 async function generateAnswer(
-  previousMessages: ChatCompletionRequestMessage[],
-  input: string
+  previousMessages: ChatCompletionRequestMessage[]
 ): Promise<ChatCompletionRequestMessage[]> {
-  const body: CreateChatCompletionRequest = {
+  const responseMessage = await requestOpenAIChat({
     model: "gpt-3.5-turbo",
     temperature: 1,
-    messages: [INITIAL_MESSAGE, ...previousMessages],
-  };
+    messages: [EXPLAIN_LAU_MESSAGE, ...previousMessages],
+  });
+  return [...previousMessages, responseMessage];
+}
 
+const ASK_FOR_TITLE_MESSAGE: ChatCompletionRequestMessage = {
+  role: "system",
+  content: `Considerando as mensagens anteriores, sugira um título elucidativo para essa conversa
+   em no máximo 4 palavras.`,
+};
+
+async function generateTitle(messages: ChatCompletionRequestMessage[]) {
+  const responseMessage = await requestOpenAIChat({
+    model: "gpt-3.5-turbo",
+    temperature: 1,
+    messages: [...messages, ASK_FOR_TITLE_MESSAGE],
+  });
+  const title = responseMessage.content;
+  return title;
+}
+
+async function requestOpenAIChat(body: CreateChatCompletionRequest) {
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -68,7 +86,8 @@ async function generateAnswer(
   const responseMessage = data.choices[0]
     .message as ChatCompletionResponseMessage;
   if (!responseMessage) throw new Error("Nenhuma resposta para sua pergunta.");
-  return [...previousMessages, responseMessage];
+
+  return responseMessage;
 }
 
-export { generateAnswer };
+export { generateAnswer, generateTitle };

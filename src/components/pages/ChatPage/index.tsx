@@ -1,45 +1,50 @@
-import { useChat } from "../context";
-import { EmptyMessages } from "./EmptyMessages";
+import { useChat, useSidebar } from "../../../context";
 import { Messages } from "./Messages";
 import React from "react";
-import { ErrorMessage, Icon, Spinner, TextArea } from "../../../components";
+import { Icon, Message, Spinner, TextArea } from "../../../components";
 import styled, { useTheme } from "styled-components";
 
-interface MainProps {
-  isMobileSidebarVisible: boolean;
+interface ChatPageProps {
+  emptyComponent: React.ReactNode;
+  onSendMessage: () => void;
 }
 
-function Main({ isMobileSidebarVisible }: MainProps) {
+function ChatPage({ emptyComponent, onSendMessage }: ChatPageProps) {
   const {
     state: { messages },
   } = useChat();
 
+  const {
+    state: { isVisible },
+  } = useSidebar();
+
   return (
-    <Container isMobileSidebarVisible={isMobileSidebarVisible}>
-      {messages.length === 0 ? <EmptyMessages /> : <Messages />}
-      <FixedInputFooter />
+    <Container isMobileSidebarVisible={isVisible}>
+      {messages.length === 0 ? emptyComponent : <Messages />}
+      <FixedInputFooter onSendMessage={onSendMessage} />
     </Container>
   );
 }
 
-const FOOTER_HEIGHT = "100px";
-
-const Container = styled.main<MainProps>`
+const Container = styled.main<{ isMobileSidebarVisible: boolean }>`
   flex: 1;
-
-  /* To make sure footer content doesn't go on top of messages */
-  padding-bottom: ${FOOTER_HEIGHT};
+  width: 100px;
 
   @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
     display: ${(p) => (p.isMobileSidebarVisible ? "none" : undefined)};
   }
+
+  /* Internal Layout */
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
 `;
 
-function FixedInputFooter() {
+function FixedInputFooter({ onSendMessage }: { onSendMessage: () => void }) {
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
   const {
-    state: { error, input },
-    actions: { sendMessage, setInput },
+    state: { isLoading, error, input },
+    actions: { setInput },
   } = useChat();
   const { breakpoint } = useTheme();
 
@@ -63,18 +68,21 @@ function FixedInputFooter() {
         placeholder="Digite algo irrelevante..."
         onKeyDown={(event) => {
           if (input === "") return;
-          if (event.shiftKey) return; // Shift + Enter means new line, not send
-          if (window.innerWidth < breakpoint.raw.desktop) return; // Only the button sends messages on mobile
+          if (isLoading) return;
+          if (event.shiftKey) return; // Shift + Enter means new line, don't send message
+          if (window.innerWidth < breakpoint.raw.desktop) return; // Only the button sends a message on smaller than desktop
 
           if (event.key === "Enter") {
             event.preventDefault();
-            sendMessage();
+            onSendMessage();
           }
         }}
         right={<SendButton />}
       />
 
-      {error && <ErrorMessage header="Algum erro ocorreu" content={error} />}
+      {error && (
+        <Message variant="error" header="Algum erro ocorreu" content={error} />
+      )}
 
       <SmallerThanDesktopFooterText>
         ChatLAU Versão 2023. Nosso objetivo é tornar sua vida miserável de forma
@@ -92,7 +100,14 @@ function SendButton() {
 
   if (isLoading) {
     return (
-      <Spinner active style={{ position: "absolute", right: 20, top: 35 }} />
+      <Spinner
+        active
+        style={{
+          position: "absolute",
+          right: 20,
+          marginTop: 2,
+        }}
+      />
     );
   }
 
@@ -114,10 +129,7 @@ function SendButton() {
 }
 
 const FooterContainer = styled.footer`
-  position: sticky;
-  bottom: 0;
-  width: 100%;
-  max-height: ${FOOTER_HEIGHT};
+  flex-shrink: 0;
 
   /* Internal Layout */
   padding: 10px 1em;
@@ -134,4 +146,4 @@ const SmallerThanDesktopFooterText = styled.p`
   }
 `;
 
-export { Main };
+export { ChatPage };

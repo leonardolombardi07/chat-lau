@@ -46,6 +46,7 @@ const TextArea = React.forwardRef(function TextArea(
         ref={ref}
         style={{ resize: "none", ...props.style }}
       />
+
       {right}
     </Container>
   );

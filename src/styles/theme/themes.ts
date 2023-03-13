@@ -9,6 +9,7 @@ export const APP_THEME: DefaultTheme = {
     border: Colors.border,
     error: Colors.error,
     link: Colors.link,
+    info: Colors.info,
   },
   breakpoint: breakpoint,
 };

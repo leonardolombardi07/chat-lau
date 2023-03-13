@@ -1,8 +1,8 @@
 import { ChatCompletionRequestMessage } from "openai";
-import { useChat } from "../context";
+import { useChat } from "../../../context";
 import React from "react";
 import styled from "styled-components";
-import { MOBILE_HEADER_HEIGHT } from "../constants";
+import { MOBILE_HEADER_HEIGHT } from "../../../routes/Layout/constants";
 
 function Messages() {
   const scrollToBottomRef = React.useRef<HTMLDivElement>(null);
@@ -33,9 +33,9 @@ function Messages() {
 }
 
 const Container = styled.div`
-  flex: 1;
-  width: 100%;
-  height: 100%;
+  flex-grow: 1;
+  overflow: auto;
+  min-height: 2em;
 
   @media ${(p) => p.theme.breakpoint.smallerThanDesktop} {
     padding-top: ${MOBILE_HEADER_HEIGHT};
